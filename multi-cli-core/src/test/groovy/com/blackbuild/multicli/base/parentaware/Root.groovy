@@ -1,5 +1,6 @@
-package com.blackbuild.multicli.base.base
+package com.blackbuild.multicli.base.parentaware
 
+import com.blackbuild.multicli.base.ParentAware
 import com.blackbuild.multicli.base.SubCommandOf
 import picocli.CommandLine
 
@@ -14,7 +15,13 @@ class Sub1 {
 
 @SubCommandOf(Root)
 @CommandLine.Command(name = "sub2")
-class Sub2 {
+class Sub2 implements ParentAware<Root> {
+    private Root parent
+
+    @Override
+    void setParent(Root parent) {
+        this.parent = parent
+    }
 }
 
 @SubCommandOf(Sub1)

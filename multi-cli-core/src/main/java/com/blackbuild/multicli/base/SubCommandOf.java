@@ -6,10 +6,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Defines an hierarchical command. Must be placed on an Instance of @{@link MultiCommandLevel}.
+ * Defines an hierarchical command. Points to the given parent command.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface MultiCommand {
-    Class<? extends MultiCommandLevel> value() default MultiCommandLevel.class;
+public @interface SubCommandOf {
+    /**
+     * The class of the parent command.
+     */
+    Class<?> value();
 }
