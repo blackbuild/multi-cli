@@ -1,0 +1,4 @@
+rootProject.name = 'multi-cli'
+include 'multi-cli-runner'
+include 'multi-cli-core'
+

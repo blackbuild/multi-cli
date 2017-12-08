@@ -1,0 +1,6 @@
+
+dependencies {
+    api 'info.picocli:picocli:2.1.0'
+    implementation 'io.github.lukehutch:fast-classpath-scanner:2.8.0'
+    implementation 'org.slf4j:slf4j-api:1.7.20'
+}
