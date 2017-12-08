@@ -33,7 +33,7 @@ class CommandCollectorTest extends Specification {
         thrown(ClassCastException)
     }
 
-    def "ParentAwareClasses get their parent set"() {
+    def "ParentAware classes get their parent set"() {
         given:
         withCollectorIn("parentaware")
 
@@ -42,6 +42,18 @@ class CommandCollectorTest extends Specification {
 
         then:
         root.subcommands.sub2.command.parent.is(root.command)
+    }
+
+    def "CommandLineAware classes get their commandLine set"() {
+        given:
+        withCollectorIn("cliaware")
+
+        when:
+        def root = collector.createCommandLineTree(com.blackbuild.multicli.base.cliaware.Root)
+        def sub2 = root.subcommands.sub2
+
+        then:
+        sub2.command.commandLine.is(sub2)
     }
 
     CommandCollector withCollectorIn(String packageName) {

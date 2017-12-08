@@ -53,7 +53,7 @@ public class CommandCollector {
             ((ParentAware) subCommand).setParent(parent.getCommand());
         }
         if (subCommand instanceof CommandLineAware)
-            ((CommandLineAware) subCommand).setCommandLine(parent);
+            ((CommandLineAware) subCommand).setCommandLine(child);
     }
 
     private CommandLine createFor(Class<?> type) {
