@@ -3,6 +3,8 @@ package com.blackbuild.multicli.base
 import com.blackbuild.multicli.base.base.Root
 import com.blackbuild.multicli.base.base.Sub1
 import com.blackbuild.multicli.base.base.SubSub1
+import com.blackbuild.multicli.base.deep.Info
+import com.blackbuild.multicli.base.deep.MyCommand
 import spock.lang.Specification
 
 class CommandCollectorTest extends Specification {
@@ -54,6 +56,26 @@ class CommandCollectorTest extends Specification {
 
         then:
         sub2.command.commandLine.is(sub2)
+    }
+
+    def "Bigger test"() {
+        given:
+        withCollectorIn("deep")
+        def cli = collector.createCommandLineTree(MyCommand)
+
+        when:
+        def clis = cli.parse('-l', 'debug', "info", "-v", "name", "-v", "name2")
+
+        then:
+        clis*.command*.class == [MyCommand, Info]
+
+        when:
+        MyCommand command = clis[0].command
+        Info info = clis[1].command
+
+        then:
+        command.logLevel == MyCommand.LogLevel.debug
+        info.values == ['name', 'name2']
     }
 
     CommandCollector withCollectorIn(String packageName) {
