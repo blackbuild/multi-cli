@@ -2,6 +2,8 @@ package com.blackbuild.multicli.base
 
 import com.blackbuild.multicli.base.base.Root
 import com.blackbuild.multicli.base.base.Sub1
+import com.blackbuild.multicli.base.base.SubSub1
+import com.blackbuild.multicli.base.exceptions.IllegalAnnotatedCommandsException
 import spock.lang.Specification
 
 class CommandCollectorTest extends Specification {
@@ -26,6 +28,7 @@ class CommandCollectorTest extends Specification {
         then:
         root.command.class == Root
         root.subcommands.sub1.command.class == Sub1
+        root.subcommands.sub1.subcommands.subsub1.command.class == SubSub1
 
     }
 

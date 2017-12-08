@@ -6,9 +6,10 @@ import picocli.CommandLine
  * Helper class for smaller tests, implements all methods of AbstractMultiCommandLevel empty.
  */
 @CommandLine.Command()
-abstract class EmptyCommand extends AbstractMultiCommandLevel {
+abstract class MockCommand extends AbstractMultiCommandLevel {
+
     @Override
-    protected void doExecute() {
+    void execute() {
     }
 
     @Override

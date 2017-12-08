@@ -5,6 +5,8 @@ package com.blackbuild.multicli.base;
  */
 interface MultiCommandLevel {
 
+    void setParent(MultiCommandLevel parent);
+
     void prepare();
 
     void execute();

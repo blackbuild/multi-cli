@@ -1,5 +1,6 @@
 package com.blackbuild.multicli.base;
 
+import com.blackbuild.multicli.base.exceptions.IllegalAnnotatedCommandsException;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import io.github.lukehutch.fastclasspathscanner.scanner.ScanResult;
 import picocli.CommandLine;
@@ -7,6 +8,9 @@ import picocli.CommandLine;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Builds the picocli tree (with commands and subcommands)
+ */
 public class CommandCollector {
 
     private final FastClasspathScanner scanner;

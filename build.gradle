@@ -54,13 +54,6 @@ subprojects {
             repo = 'multi-cli'
             userOrg = 'blackbuild'
             name = rootProject.name
-            desc = project.description
-            websiteUrl = 'https://github.com/blackbuild/multi-cli'
-            issueTrackerUrl = 'https://github.com/blackbuild/multi-cli/issues'
-            vcsUrl = 'https://github.com/blackbuild/multi-cli.git'
-            licenses = ['MIT']
-            labels = ['java', 'cli']
-            publicDownloadNumbers = true
             publications = ['nebula']
             version {
                 gpg {

@@ -1,4 +1,4 @@
-package com.blackbuild.multicli.base;
+package com.blackbuild.multicli.base.exceptions;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -1,17 +1,11 @@
 package com.blackbuild.multicli.base;
 
-import picocli.CommandLine;
-
 public abstract class AbstractMultiCommandLevel implements MultiCommandLevel {
 
-    private CommandLine commandLine;
+    private MultiCommandLevel parent;
 
     @Override
-    public void execute() {
-        prepare();
-        doExecute();
-        cleanUp();
+    public void setParent(MultiCommandLevel parent) {
+        this.parent = parent;
     }
-
-    protected abstract void doExecute();
 }
