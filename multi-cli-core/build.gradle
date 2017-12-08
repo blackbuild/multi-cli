@@ -1,4 +1,3 @@
-
 dependencies {
     api 'info.picocli:picocli:2.1.0'
     implementation 'io.github.lukehutch:fast-classpath-scanner:2.8.0'

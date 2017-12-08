@@ -22,10 +22,10 @@ apply plugin: "org.sonarqube"
 apply plugin: 'nebula.release'
 apply plugin: 'com.jfrog.bintray'
 
-group 'com.blackbuild.multicli'
 
 allprojects {
     apply plugin: 'license'
+    group 'com.blackbuild.multicli'
 
     repositories {
         jcenter()
