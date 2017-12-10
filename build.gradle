@@ -34,6 +34,7 @@ apply plugin: 'nebula.contacts'
 apply plugin: 'com.jfrog.bintray'
 
 group 'com.blackbuild.multicli'
+description 'Climb CLI trees with style'
 
 repositories {
     jcenter()
@@ -85,5 +86,25 @@ dependencies {
 model {
     tasks.release {
         dependsOn 'bintrayUpload'
+    }
+}
+
+contacts {
+    'stephan@blackbuild.com' {
+        moniker 'Stephan Pauxberger'
+        github 'pauxus'
+    }
+}
+
+publishing {
+    publications {
+        nebula(MavenPublication) {
+            pom.withXml {
+                def p = asNode()
+                p.appendNode('licenses').appendNode('license').
+                        appendNode('name', 'The MIT License (MIT)').parent().
+                        appendNode('url', 'http://opensource.org/licenses/MIT')
+            }
+        }
     }
 }
