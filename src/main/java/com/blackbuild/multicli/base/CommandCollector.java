@@ -36,6 +36,7 @@ public class CommandCollector {
 
     private final FastClasspathScanner scanner;
     private List<Class<?>> commandClasses;
+    private ScanResult scan;
 
     public CommandCollector(FastClasspathScanner scanner) {
         this.scanner = scanner;
@@ -47,7 +48,7 @@ public class CommandCollector {
     }
 
     private void scanClasspath() {
-        ScanResult scan = scanner.scan();
+        scan = scanner.scan();
         commandClasses = scan.classNamesToClassRefs(scan.getNamesOfClassesWithAnnotation(SubCommandOf.class));
     }
 
@@ -57,8 +58,22 @@ public class CommandCollector {
         return root;
     }
 
-    private void addChildren(final CommandLine parent) {
+    public List<Class<?>> getRootCommands() {
+        return scan.classNamesToClassRefs(scan.getNamesOfClassesWithAnnotation(RootCommand.class));
+    }
 
+    public Class<?> getSingleRootCommand() {
+        List<Class<?>> mainCommands = getRootCommands();
+        if (mainCommands.isEmpty())
+            throw new IllegalStateException(String.format("No class annotated with RootCommand found in scanned path (%s)", scan.getUniqueClasspathElementsAsPathStr()));
+
+        if (mainCommands.size() > 1)
+            throw new IllegalStateException(String.format("More than one root command found in scanned classpath (%s)", mainCommands));
+
+        return mainCommands.get(0);
+    }
+
+    private void addChildren(final CommandLine parent) {
         commandClasses
                 .stream()
                 .filter(type -> type.getAnnotation(SubCommandOf.class).value() == parent.getCommand().getClass())

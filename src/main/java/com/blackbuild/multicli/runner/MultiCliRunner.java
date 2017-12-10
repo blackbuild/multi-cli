@@ -29,7 +29,9 @@ import picocli.CommandLine;
 /**
  * Runner for a MultiCli application.
  *
- * Usage: Create a subclass of this class and include a main method. Then
+ * Usage: Create a subclass of this class and include a main method. Otherwise, if there is exactly one
+ * class annotated with {@link com.blackbuild.multicli.base.RootCommand} in the classpath, you can also
+ * simply use {@link MultiCliRunner} as main class of the application
  */
 public abstract class MultiCliRunner {
 
@@ -45,4 +47,9 @@ public abstract class MultiCliRunner {
         command.parseWithHandler(new CommandLine.RunLast(), System.out, args);
     }
 
+    public static void main(String[] args) {
+        CommandCollector commandCollector = new CommandCollector();
+        Class<?> singleMainCommand = commandCollector.getSingleRootCommand();
+        commandCollector.createCommandLineTree(singleMainCommand).parseWithHandler(new CommandLine.RunLast(), System.out, args);
+    }
 }

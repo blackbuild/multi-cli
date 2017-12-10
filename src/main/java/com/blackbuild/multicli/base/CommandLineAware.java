@@ -25,6 +25,10 @@ package com.blackbuild.multicli.base;
 
 import picocli.CommandLine;
 
+/**
+ * Command line aware classes get their matching {@link CommandLine} instance injected during
+ * construction of the cli tree. This allows access to all ancestor command objects as well.
+ */
 public interface CommandLineAware {
     void setCommandLine(CommandLine commandLine);
 }

@@ -23,13 +23,17 @@
  */
 package com.blackbuild.multicli.base;
 
+import picocli.CommandLine;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Defines an hierarchical command. Points to the given parent command.
+ * Defines an hierarchical command. Points to the given parent command. Subcommand are automatically
+ * linked to their parent command as subcommand when using {@link CommandCollector}, using the given
+ * {@link CommandLine.Command#name()} or, if missing the name of the class.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

@@ -23,15 +23,16 @@
  */
 package com.blackbuild.multicli.base;
 
-/**
- * Designates a class that is parent aware. ParentAware classes get their parents injected
- * during the building of the command tree.
- */
-public interface ParentAware<T> {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    /**
-     * Set the parent of this command before executing the command.
-     * @param parent The parent.
-     */
-    void setParent(T parent);
+/**
+ * Designates the main / root command of a CLI.
+ * Can be used to determine the root automatically.
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface RootCommand {
 }

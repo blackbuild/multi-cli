@@ -28,6 +28,9 @@ import com.blackbuild.multicli.base.base.Sub1
 import com.blackbuild.multicli.base.base.SubSub1
 import com.blackbuild.multicli.base.deep.Info
 import com.blackbuild.multicli.base.deep.MyCommand
+import com.blackbuild.multicli.base.multipleroots.Multiroot
+import com.blackbuild.multicli.base.multipleroots.Multiroot2
+import com.blackbuild.multicli.base.singleroot.SingleRoot
 import spock.lang.Specification
 
 class CommandCollectorTest extends Specification {
@@ -101,7 +104,45 @@ class CommandCollectorTest extends Specification {
         info.values == ['name', 'name2']
     }
 
-    CommandCollector withCollectorIn(String packageName) {
-        collector = new CommandCollector("${this.class.package.name}.$packageName")
+    def "find single root command"() {
+        when:
+        withCollectorIn("singleroot")
+
+        then:
+        collector.rootCommands == [SingleRoot]
+        collector.singleRootCommand == SingleRoot
+    }
+
+    def "multiple root commands is an error"() {
+        when:
+        withCollectorIn("multipleroots")
+
+        then:
+        collector.rootCommands as Set == [Multiroot, Multiroot2] as Set
+
+        when:
+        collector.getSingleRootCommand()
+
+        then:
+        thrown IllegalStateException
+    }
+
+    def "no root commands is an error"() {
+        when:
+        withCollectorIn("base")
+
+        then:
+        collector.rootCommands.isEmpty()
+
+        when:
+        collector.getSingleRootCommand()
+
+        then:
+        thrown IllegalStateException
+    }
+
+    CommandCollector withCollectorIn(String... packageShortNames) {
+        def packageNames = packageShortNames.collect { "${this.class.package.name}.$it" }
+        collector = new CommandCollector(packageNames as String[])
     }
 }
