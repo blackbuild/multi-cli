@@ -23,6 +23,8 @@
  */
 package com.blackbuild.multicli.base;
 
+import com.blackbuild.classeratree.Node;
+import com.blackbuild.classeratree.TreeBuilder;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import io.github.lukehutch.fastclasspathscanner.scanner.ScanResult;
 import picocli.CommandLine;
@@ -49,14 +51,48 @@ public class CommandCollector {
 
     private void scanClasspath() {
         scan = scanner.scan();
-        commandClasses = scan.classNamesToClassRefs(scan.getNamesOfClassesWithAnnotation(SubCommandOf.class));
+        commandClasses = scan.classNamesToClassRefs(scan.getNamesOfClassesWithAnnotation(CommandLine.Command.class));
     }
 
     public CommandLine createCommandLineTree(Class<?> rootType) {
-        CommandLine root = createFor(rootType);
-        addChildren(root);
-        return root;
+        TreeBuilder<Class<?>> treeBuilder = new TreeBuilder<>(commandClasses);
+
+        Node<Class<?>> tree = treeBuilder.getTreeFor(rootType, CommandCollector::isParentSubCommand);
+
+        return createFor(tree, null);
     }
+
+    private CommandLine createFor(Node<Class<?>> node, CommandLine parent) {
+        try {
+            Class<?> type = node.getPayload();
+            CommandLine result = new CommandLine(type.newInstance());
+            CommandLine.Command command = type.getAnnotation(CommandLine.Command.class);
+
+            String name = command != null ? command.name() : "<main class>";
+
+            if (name.equals("<main class>"))
+                name = type.getSimpleName().toLowerCase();
+
+            result.setCommandName(name);
+
+            if (parent != null)
+                parent.addSubcommand(name, result);
+
+            applyAdditionalInterfaces(parent, result);
+            node.getChildren().forEach(it -> createFor(it, result));
+
+            return result;
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private static boolean isParentSubCommand(Class<?> parent, Class<?> child) {
+        SubCommandOf annotation = child.getAnnotation(SubCommandOf.class);
+
+        return annotation != null && annotation.value() == parent;
+    }
+
 
     public List<Class<?>> getRootCommands() {
         return scan.classNamesToClassRefs(scan.getNamesOfClassesWithAnnotation(RootCommand.class));
@@ -73,41 +109,13 @@ public class CommandCollector {
         return mainCommands.get(0);
     }
 
-    private void addChildren(final CommandLine parent) {
-        commandClasses
-                .stream()
-                .filter(type -> type.getAnnotation(SubCommandOf.class).value() == parent.getCommand().getClass())
-                .map(this::createCommandLineTree)
-                .forEach(subCommand -> {
-                    parent.addSubcommand(subCommand.getCommandName(), subCommand);
-                    applyAdditionalInterfaces(parent, subCommand);
-                });
-    }
-
     private void applyAdditionalInterfaces(CommandLine parent, CommandLine child) {
         Object subCommand = child.getCommand();
-        if (subCommand instanceof ParentAware) {
+        if (subCommand instanceof ParentAware && parent != null) {
             //noinspection unchecked
             ((ParentAware) subCommand).setParent(parent.getCommand());
         }
         if (subCommand instanceof CommandLineAware)
             ((CommandLineAware) subCommand).setCommandLine(child);
-    }
-
-    private CommandLine createFor(Class<?> type) {
-        try {
-            CommandLine result = new CommandLine(type.newInstance());
-            CommandLine.Command command = type.getAnnotation(CommandLine.Command.class);
-
-            String name = command != null ? command.name() : "<main class>";
-
-            if (name.equals("<main class>"))
-                name = type.getSimpleName().toLowerCase();
-
-            result.setCommandName(name);
-            return result;
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new IllegalStateException(e);
-        }
     }
 }
