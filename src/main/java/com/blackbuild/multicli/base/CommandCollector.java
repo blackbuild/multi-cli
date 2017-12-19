@@ -66,17 +66,9 @@ public class CommandCollector {
         try {
             Class<?> type = node.getPayload();
             CommandLine result = new CommandLine(type.newInstance());
-            CommandLine.Command command = type.getAnnotation(CommandLine.Command.class);
 
-            String name = command != null ? command.name() : "<main class>";
-
-            if (name.equals("<main class>"))
-                name = type.getSimpleName().toLowerCase();
-
-            result.setCommandName(name);
-
-            if (parent != null)
-                parent.addSubcommand(name, result);
+            setCommandNameFromClass(result);
+            addSubcommand(parent, result);
 
             applyAdditionalInterfaces(parent, result);
             node.getChildren().forEach(it -> createFor(it, result));
@@ -87,12 +79,25 @@ public class CommandCollector {
         }
     }
 
-    private static boolean isParentSubCommand(Class<?> parent, Class<?> child) {
-        SubCommandOf annotation = child.getAnnotation(SubCommandOf.class);
-
-        return annotation != null && annotation.value() == parent;
+    private void addSubcommand(CommandLine parent, CommandLine child) {
+        if (parent != null)
+            parent.addSubcommand(child.getCommandName(), child);
     }
 
+    private void setCommandNameFromClass(CommandLine cli) {
+        Class<?> type = cli.getCommand().getClass();
+        CommandLine.Command command = type.getAnnotation(CommandLine.Command.class);
+
+        if (command == null || command.name().equals("<main class>"))
+            cli.setCommandName(type.getSimpleName().toLowerCase());
+        else
+            cli.setCommandName(command.name());
+    }
+
+    private static boolean isParentSubCommand(Class<?> parent, Class<?> child) {
+        SubCommandOf annotation = child.getAnnotation(SubCommandOf.class);
+        return annotation != null && annotation.value() == parent;
+    }
 
     public List<Class<?>> getRootCommands() {
         return scan.classNamesToClassRefs(scan.getNamesOfClassesWithAnnotation(RootCommand.class));
